@@ -1,8 +1,10 @@
 const Sauce = require("../models/sauces")
 
 exports.createSauce = (req, res, next) => {
-  const sauce = new Sauce({
-    ...req.body,
+  const sauceObject = JSON.parse(req.body.sauce)
+  console.log(sauceObject);
+  const oneSauce = new Sauce({
+    ...sauceObject,
     likes: 0,
     disLikes: 0,
     usersLiked: [],
@@ -10,7 +12,13 @@ exports.createSauce = (req, res, next) => {
     imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
   })
 
-  sauce.save()
-    .then(res.status(201).json({message: "Votre sauce a été créée !"}))
+  oneSauce.save()
+    .then(() => res.status(201).json({message: "Votre sauce a été créée !"}))
+    .catch(err => res.status(400).json({err}))
+}
+
+exports.getAllSauces = (req, res, next) => {
+  Sauce.find()
+    .then(sauces => res.status(200).json(sauces))
     .catch(err => res.status(400).json({err}))
 }

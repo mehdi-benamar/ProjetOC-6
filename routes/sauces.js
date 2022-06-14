@@ -5,5 +5,6 @@ const auth = require("../middleware/auth")
 const multer = require("../middleware/multer")
 
 route.post("/sauces", auth, multer, sauceCtrl.createSauce)
+route.get("/sauces", auth, sauceCtrl.getAllSauces)
 
 module.exports = route

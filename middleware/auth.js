@@ -5,15 +5,14 @@ module.exports = (req, res, next) => {
     const token = req.headers.authorization.split(" ")[1]
     const clearToken = jwt.verify(token, "VERIFY_AND_CHECK_JWT_TOKEN")
     const userId = clearToken.userId
-    req.headers.userId = clearToken.userId
-    if(req.headers.userId && req.headers.userId !== userId){
-      throw new Error("ID utilisateur invalide")
+    if(req.body.userId && req.body.userId != userId){
+      throw "ID utilisateur invalide"
     }else{
       next()
     }
 
   }catch(err){
-    return res.status(401).json({message: err.message})
+     res.status(401).json({message: err.message})
   }
 }
 
