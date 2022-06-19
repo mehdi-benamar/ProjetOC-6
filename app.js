@@ -7,7 +7,7 @@ const sauceRoute = require("./routes/sauces")
 
 dotenv.config()
 
-mongoose.connect(`mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@${process.env.CLUSTER}.mongodb.net/?retryWrites=true&w=majority`, {
+mongoose.connect(`mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@projet6.qwy3bra.mongodb.net/?retryWrites=true&w=majority`, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
