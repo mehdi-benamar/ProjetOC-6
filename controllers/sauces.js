@@ -1,7 +1,5 @@
 const Sauce = require("../models/sauces")
 const fs = require("fs")
-const { json } = require("express")
-const sauces = require("../models/sauces")
 
 exports.createSauce = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauce)
@@ -71,18 +69,32 @@ exports.likeOneSauce = (req, res, next) => {
 
       if(req.body.like === 1){
         Sauce.updateOne({_id: req.params.id}, {$push: {usersLiked: req.body.userId}, $inc:{likes: 1}})
-          .then(() => res.status(200).json({message: "réussie"}))
+          .then(() => res.status(200).json({message: "Like ajouté"}))
+          .catch(err => res.status(400).json({err}))
+
+      }
+      else if(req.body.like === -1){
+        Sauce.updateOne({_id: req.params.id}, {$push: {usersDisliked: req.body.userId}, $inc:{dislikes: 1}})
+          .then(() => res.status(200).json({message: "Dislike ajouté"}))
+          .catch(err => res.status(400).json({err}))
+
+      }
+      else{
+        Sauce.findOne({_id: req.params.id})
+          .then(sauce => {
+            const tabUsersLiked = sauce.usersLiked.find(id => id === req.body.userId)
+            const tabUsersDisliked = sauce.usersDisliked.find(id => id === req.body.userId)
+            if(tabUsersLiked){
+              Sauce.updateOne({_id: sauce._id}, {$pull: {usersLiked: req.body.userId}, $inc:{likes: -1}})
+                .then(() => res.status(200).json({message: "Like supprimé !"}))
+                .catch(err => res.status(400).json({err}))
+            }
+            if(tabUsersDisliked){
+              Sauce.updateOne({_id: sauce._id}, {$pull: {usersDisliked: req.body.userId}, $inc:{dislikes: -1}})
+                .then(() => res.status(200).json({message: "Dislike supprimé !"}))
+                .catch(err => res.status(400).json({err}))
+            }
+          })
           .catch(err => res.status(400).json({err}))
       }
-      if(req.body.like === 0){
-        Sauce.updateOne({_id: req.params.id}, {$pull: {usersLiked: req.body.userId}, $inc:{likes: -1}})
-          .then(() => res.status(200).json({message: "réussie"}))
-          .catch(err => res.status(400).json({err}))
-      }
-      if(req.body.like === -1){
-        Sauce.updateOne({_id: req.params.id}, {$push: {usersDisliked: req.body.userId}, $inc:{disLikes: 1}})
-          .then(() => res.status(200).json({message: "réussie"}))
-          .catch(err => res.status(400).json({err}))
-      }
-  console.log(req.body)
 }
