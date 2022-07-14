@@ -40,7 +40,7 @@ exports.updateOneSauce = (req, res, next) => {
           const oldImage = sauce.imageUrl.split("/images/")[1]
           const sauceObject = JSON.parse(req.body.sauce)
           fs.unlink("images/" + oldImage, () => {
-            Sauce.updateOne({_id: sauce._id}, {
+            Sauce.updateOne({_id: req.params.id}, {
               ...sauceObject,
               imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
             })
